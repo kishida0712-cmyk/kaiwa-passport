@@ -1,0 +1,513 @@
+<title>会話パスポート</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+:root{
+  --ink:#1C2620; --paper:#F6F4EC; --surface:#FFFFFF; --accent:#245C4B; --accent-ink:#F6F4EC;
+  --accent-2:#B08D3D; --line:#DDD6C4; --mute:#6B7268; --chip:#EFEADC;
+  --shadow: 0 1px 2px rgba(28,38,32,.06), 0 6px 16px -8px rgba(28,38,32,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#ECE8DC; --paper:#12201A; --surface:#182C23; --accent:#6FC2A6; --accent-ink:#0C1712;
+    --accent-2:#D8B563; --line:#2A3F34; --mute:#98A69C; --chip:#1E352C;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 24px -10px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#ECE8DC; --paper:#12201A; --surface:#182C23; --accent:#6FC2A6; --accent-ink:#0C1712;
+  --accent-2:#D8B563; --line:#2A3F34; --mute:#98A69C; --chip:#1E352C;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 24px -10px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Zen Kaku Gothic New",system-ui,sans-serif;line-height:1.65}
+.app{max-width:520px;margin:0 auto;min-height:100vh;background:var(--paper);position:relative;padding-bottom:28px}
+h1,h2,h3{font-family:"Shippori Mincho",serif;text-wrap:balance;margin:0}
+.eyebrow{font-size:11px;letter-spacing:.14em;color:var(--mute);text-transform:uppercase;font-weight:700}
+
+/* ---- header ---- */
+header.top{padding:22px 20px 16px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand h1{font-size:26px;font-weight:700;color:var(--accent)}
+.brand .stampcount{margin-left:auto;font-size:12px;color:var(--mute);font-family:"Zen Kaku Gothic New";display:flex;align-items:center;gap:5px;white-space:nowrap}
+.brand .stampcount b{color:var(--accent-2);font-size:15px}
+.sub{margin:6px 0 0;color:var(--mute);font-size:13.5px}
+
+details.howto{margin-top:14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:2px 14px}
+details.howto summary{cursor:pointer;padding:10px 0;font-weight:700;font-size:13.5px;color:var(--accent);list-style:none;display:flex;align-items:center;gap:6px}
+details.howto summary::-webkit-details-marker{display:none}
+details.howto summary::before{content:"▸";transition:transform .15s}
+details.howto[open] summary::before{transform:rotate(90deg)}
+details.howto ol{margin:0 0 12px;padding-left:20px;font-size:13px;color:var(--ink)}
+details.howto li{margin-bottom:6px}
+
+/* ---- today banner ---- */
+.todaybox{margin:16px 20px 0;background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.todaybox .eyebrow2{font-size:11px;letter-spacing:.08em;opacity:.85;font-weight:700;text-transform:none}
+.todaybox b{display:block;font-size:15.5px;margin:4px 0 2px;font-family:"Shippori Mincho",serif}
+.todaybox .stagepill{display:inline-block;font-size:10.5px;font-weight:700;background:rgba(255,255,255,.22);padding:2px 9px;border-radius:999px;margin-bottom:6px}
+.todaybtn{margin-top:8px;display:inline-block;background:var(--paper);color:var(--accent);border:0;border-radius:8px;padding:8px 16px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.todaybox.none{background:var(--surface);color:var(--mute);border:1px dashed var(--line)}
+.todaybox.none b{color:var(--ink)}
+
+/* ---- mode switch ---- */
+nav.modeswitch{display:flex;gap:8px;padding:16px 20px 0}
+nav.modeswitch button{flex:1;padding:11px 8px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--mute);font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+nav.modeswitch button.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+nav.modeswitch button.keigobtn{flex:0 0 auto;padding:11px 16px;color:var(--accent-2);border-color:var(--accent-2)}
+nav.modeswitch button.keigobtn.on{background:var(--accent-2);border-color:var(--accent-2);color:var(--paper)}
+
+/* ---- tabs ---- */
+nav.tabs{display:flex;gap:8px;overflow-x:auto;padding:14px 20px;border-bottom:1px solid var(--line);scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{flex:0 0 auto;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:13.5px;font-weight:500;cursor:pointer;white-space:nowrap}
+nav.tabs button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+
+/* ---- list screen ---- */
+#screenList{padding:16px 20px 8px}
+.visa-note{font-size:12px;color:var(--mute);margin:0 0 14px;padding:10px 12px;background:var(--chip);border-radius:8px;border-left:3px solid var(--accent-2)}
+.cardlist{display:flex;flex-direction:column;gap:10px}
+.jobcard{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:14px 16px;cursor:pointer;font:inherit;color:var(--ink);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px;position:relative}
+.jobcard:hover{border-color:var(--accent)}
+.jobcard .row1{display:flex;align-items:center;gap:8px}
+.chip{font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:3px 8px;border-radius:999px;background:var(--chip);color:var(--accent)}
+.chip.visa{background:transparent;border:1px solid var(--accent-2);color:var(--accent-2)}
+.stamp{margin-left:auto;font-size:10.5px;color:var(--accent-2);font-weight:700;display:flex;align-items:center;gap:3px;border:1.5px solid var(--accent-2);border-radius:999px;padding:2px 8px;transform:rotate(-6deg)}
+.jobcard b{font-size:15.5px;font-weight:700;line-height:1.4}
+.jobcard .scene{font-size:12.5px;color:var(--mute)}
+
+/* ---- detail screen ---- */
+#screenDetail{display:none;padding:0 20px 20px}
+.backbtn{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--accent);font:inherit;font-weight:700;font-size:13.5px;cursor:pointer;padding:16px 0 6px}
+.detailhead{padding:6px 0 18px;border-bottom:1px solid var(--line)}
+.detailhead .chiprow{display:flex;gap:6px;margin-bottom:10px}
+.detailhead h2{font-size:21px;color:var(--ink)}
+.detailhead .scene{margin-top:8px;font-size:13.5px;color:var(--mute)}
+
+.opener-note{margin:16px 0 0;font-size:12.5px;background:var(--chip);border-left:3px solid var(--accent-2);border-radius:8px;padding:10px 12px;color:var(--ink)}
+details.helperwords{margin-top:14px;padding:2px 14px}
+details.helperwords ul{margin:0 0 10px;padding-left:20px;font-size:12.5px;color:var(--ink)}
+details.helperwords li{margin-bottom:6px}
+
+.modelbox{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.modelhead{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.modeltitle{font-weight:700;font-size:13.5px;color:var(--accent)}
+.playbtn{margin-left:auto;border:1px solid var(--accent);background:transparent;color:var(--accent);font:inherit;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;cursor:pointer}
+.playbtn:disabled{opacity:.6;cursor:default}
+.modelline{font-size:13px;margin:4px 0}
+.modelline b{color:var(--accent)}
+
+.step{margin-top:20px}
+.step .steplabel{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.step .steplabel .num{width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.step .steplabel .name{font-weight:700;font-size:14px}
+.step .stephint{font-size:12px;color:var(--mute);margin:0 0 8px 30px}
+.promptbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:13.5px;white-space:pre-wrap;position:relative}
+.copybtn{margin-top:10px;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--accent);background:transparent;color:var(--accent);font:inherit;font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer}
+.copybtn.copied{background:var(--accent);color:var(--accent-ink)}
+
+.reflect{margin-top:26px;padding-top:18px;border-top:1px solid var(--line)}
+.reflect h3{font-size:15px;color:var(--accent)}
+.reflect p.note{font-size:12.5px;color:var(--mute);margin:4px 0 10px}
+
+/* ---- keigo tab ---- */
+#screenKeigo{padding:16px 20px}
+table.keigo{width:100%;border-collapse:collapse;font-size:13px;background:var(--surface);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
+table.keigo th,table.keigo td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left}
+table.keigo th{background:var(--chip);color:var(--accent);font-size:11.5px;letter-spacing:.03em}
+table.keigo tr:last-child td{border-bottom:0}
+
+@media (max-width:400px){
+  .brand h1{font-size:22px}
+  .jobcard b{font-size:14.5px}
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1>会話パスポート</h1>
+      <div class="stampcount">スタンプ <b id="stampCount">0</b>/<span id="stampTotal">27</span></div>
+    </div>
+    <p class="sub">日常生活からホテル・空港・オフィスなど就職後の職場まで、ChatGPT・Claude.ai の無料版と話して会話を練習する。</p>
+    <details class="howto">
+      <summary>使い方</summary>
+      <ol>
+        <li>下から練習したい場面を1つ選ぶ。</li>
+        <li>ChatGPT（chatgpt.com）か Claude.ai（claude.ai）を開き、無料アカウントでログインする。</li>
+        <li>STEP1から順に、枠の中の文章を「コピー」して貼り付けて送る。（電話を受ける場面だけ、送った後に自分から話しかける一言が必要）</li>
+        <li>AIが役になりきって話しかけてくるので、日本語で答える。役から外れたら「役に戻って、続けてください」と送る。</li>
+        <li>会話が終わりに近づくと、AIが自動で【ふりかえり】も伝えてくれる。もっと詳しく聞きたいときは、一番下の「ふりかえり」を貼り付ける。</li>
+        <li>無料版は1日に送れる回数に制限あり。使い切ったら時間をおいて再開する。会社名・個人名は入力しない。</li>
+      </ol>
+    </details>
+  </header>
+
+  <div id="todayBanner"></div>
+  <nav class="modeswitch" id="modeswitch"></nav>
+  <nav class="tabs" id="tabs"></nav>
+
+  <main id="screenList">
+    <p class="visa-note" id="visaNote"></p>
+    <div class="cardlist" id="cardlist"></div>
+  </main>
+
+  <section id="screenDetail">
+    <button class="backbtn" id="backBtn">← 場面一覧にもどる</button>
+    <div class="detailhead">
+      <div class="chiprow" id="detailChips"></div>
+      <h2 id="detailTitle"></h2>
+      <p class="scene" id="detailScene"></p>
+    </div>
+    <div id="detailOpener"></div>
+    <div id="modelHost"></div>
+    <details class="howto helperwords">
+      <summary>💡 困ったときのお助けことば</summary>
+      <ul>
+        <li><b>時間を稼ぐ</b>：「えっと……」「そうですね……」「少々お待ちください」</li>
+        <li><b>もう一度聞く</b>：「すみません、もう一度お願いします」</li>
+        <li><b>言葉がわからない</b>：「すみません、＿＿はどういう意味ですか」</li>
+        <li><b>確認する</b>：「＿＿ということですか」「＿＿でいいですか」</li>
+        <li><b>話を続ける</b>：「それで」「あと」「それから」</li>
+      </ul>
+    </details>
+    <div id="stepsHost"></div>
+    <div class="reflect">
+      <h3>もっと詳しいふりかえりが欲しいとき</h3>
+      <p class="note">会話の最後にAIが自動でふりかえりを伝えますが、もう一度・もっと詳しく聞きたいときはこれを貼り付けてください。</p>
+      <div class="promptbox" id="reflectBox"></div>
+      <button class="copybtn" data-copytarget="reflectBox" data-stampid="">コピーする</button>
+    </div>
+  </section>
+
+  <section id="screenKeigo">
+    <p class="visa-note">レストラン・接客の練習で習った敬語は、オフィスやホテル、空港の場面でもそのまま使えます。</p>
+    <table class="keigo">
+      <tr><th>場面</th><th>プロの丁寧な言い方</th><th>いつもの言い方</th></tr>
+      <tr><td>返事</td><td>かしこまりました</td><td>わかりました</td></tr>
+      <tr><td>説明</td><td>〜でございます</td><td>〜です</td></tr>
+      <tr><td>質問</td><td>〜でよろしいでしょうか</td><td>〜でいいですか</td></tr>
+      <tr><td>提案</td><td>いかがなさいますか</td><td>どうしますか</td></tr>
+      <tr><td>謝罪</td><td>申し訳ございません</td><td>すみません</td></tr>
+      <tr><td>依頼</td><td>少々お待ちください</td><td>ちょっと待ってください</td></tr>
+      <tr><td>前置き</td><td>恐れ入りますが</td><td>すみませんが</td></tr>
+    </table>
+  </section>
+</div>
+
+<script>
+const KEIGO_RULE = "丁寧体（です・ます）を基本にしてください。相手が友達やクラスメートの場合は、やわらかい言い方が混ざってもかまいません。";
+const VOCAB_RULE = "日常生活でよく使う語彙・表現（N4〜N3レベル）を中心に話してください。難しい言葉を使うときは、聞かれたらやさしく言い換えてください。";
+const SENTENCE_RULE = "1回の発言は1〜3文、質問は1つずつにしてください。";
+const NO_CORRECT_RULE = "私の日本語が間違っていても、会話の途中では訂正しないでください。";
+const CLOSE_RULE = "やりとりが7〜8往復くらいになったら、自然に会話を締めくくってください。";
+const ON_TOPIC_RULE = "場面の目的（学生の目標）から会話が大きく脱線しないようにしてください。雑談が少し広がるのはよいですが、全く関係ない話題（ニュース、政治、恋愛相談など）に流れそうになったら、「そういえば、さっきの件だけど」のように自然に元の話題に戻してください。";
+const AUTO_FEEDBACK_RULE = "会話を締めくくったら、そのまま同じ返信の中で「役」から「日本語教師」に切り替えて、今の会話のふりかえりを日本語でやさしく伝えてください。次の4項目にしてください：1.良かった点(2〜3つ) 2.直したほうがいい表現(間違っていた文と正しい言い方のペアで3〜5個) 3.場面に合わない言い方があれば(丁寧すぎた・くだけすぎていたところ) 4.次に練習するとよいこと(3つまで)。ふりかえりの前には「【ふりかえり】」と書いて、役の会話部分と区別してください。";
+
+const TIERS = [
+  {label:'STEP1　型あり', hint:'まずは決まった流れで、ゆっくり練習する', extra:'ゆっくり、はっきり話してください。私が困っているようなら、簡単な言い方でもう一度言うか、答えの候補を2つ示してください。'},
+  {label:'STEP2　型なし・自由', hint:'内容を変えて、自分の言葉で答える', extra:'会社名や時間、金額など具体的な内容は毎回変えて話してください。決まった言い方どおりでなく、私が自分の言葉で答える時間を大切にしてください。'},
+  {label:'STEP3　総仕上げ', hint:'予想外の展開にもとっさに対応する', extra:'途中で1つ、予想していなかった展開（急な変更・追加の質問・小さいトラブルなど）を入れてください。私がその場でどう対応するか見てください。'},
+];
+
+const REFLECT_PROMPT = "ここまでの会話の練習を読んで、日本語教師の視点で、N4〜N3レベルの学習者に合わせたふりかえりをしてください。次の項目で、学生にやさしい日本語で教えてください。\n\n1. 良かった点（2〜3つ）\n2. 直したほうがいい表現（間違っていた文と、正しい言い方をペアで、3〜5個）\n3. 場面に合わない言い方（丁寧すぎた・くだけすぎていたところ、あれば）\n4. 次に練習するとよいこと（3つまで、具体的に）";
+
+const MODES = [
+  {key:'nichijou', label:'日常会話'},
+  {key:'shigoto', label:'しごと・ビジネス'},
+];
+const CATS = [
+  {key:'tsunagari', mode:'nichijou', label:'人とのつながり'},
+  {key:'shumi', mode:'nichijou', label:'趣味・休日'},
+  {key:'kaimono', mode:'nichijou', label:'買い物・レストラン'},
+  {key:'dekakeru', mode:'nichijou', label:'お出かけ・旅行'},
+  {key:'kisetsu', mode:'nichijou', label:'季節・行事'},
+  {key:'kurashi', mode:'nichijou', label:'ご近所・生活'},
+  {key:'office', mode:'shigoto', label:'事務', visa:'技術・人文知識・国際業務'},
+  {key:'hotel', mode:'shigoto', label:'ホテル', visa:'特定技能（宿泊）'},
+  {key:'airport', mode:'shigoto', label:'空港', visa:'特定技能（航空）'},
+  {key:'gaishoku', mode:'shigoto', label:'外食', visa:'特定技能（外食）'},
+  {key:'common', mode:'shigoto', label:'共通', visa:'全業種共通'},
+];
+const catByKey = Object.fromEntries(CATS.map(c=>[c.key,c]));
+
+const SCENES = [
+  {id:'hajimemashite', mode:'nichijou', cat:'tsunagari', src:'つなぐ日本語 L1', cando:'初めて会った人に、名前や出身国を伝えて自己紹介ができる。', scene:'国際交流協会の新年会で、隣の席の人と自己紹介をする。', who:'新年会で隣の席になった日本人', scenario:'国際交流協会の新年会という設定で、隣の席の私に「はじめまして」と話しかけてください。名前と出身国を聞いたあと、日本に来てどのくらいか、今何をしているか（仕事か学校か）も聞いてください。最後に、近くにいる「田中さん」という知り合いを呼んで、私を紹介してください。'},
+  {id:'hisashiburi', mode:'nichijou', cat:'tsunagari', src:'いろどり 初級1 L1', cando:'久しぶりに会った人とあいさつをし、自分の近況を簡単に話すことができる。', scene:'駅前のスーパーで、半年ぶりに知り合いに会う。', who:'半年ぶりに会う知り合い（前に同じ日本語学校に通っていた）', scenario:'駅前のスーパーで、半年ぶりに会う私に「あ、久しぶり！元気だった？」と声をかけてください。前に同じ日本語学校で会っていたという設定で、今は学校を卒業したか、就職したかなど、近況を具体的に聞いてください。'},
+  {id:'shumi', mode:'nichijou', cat:'shumi', src:'いろどり 初級1 L2', cando:'趣味や好きなことについて、簡単に話すことができる。', scene:'職場の歓迎会で、隣の席になった人と趣味の話をする。', who:'歓迎会で隣の席になった同僚', scenario:'職場の歓迎会という設定で、隣の席になった私に「〇〇さんの趣味は何ですか」と聞いてください。私が答えたら、いつから好きか、最近何をしたかなど、具体的に1つ質問を重ねてください（例えば「料理」なら「最近何を作りましたか」）。'},
+  {id:'yasumi', mode:'nichijou', cat:'shumi', src:'いろどり 初級1 L2', cando:'休みの日の過ごし方について、質問したり質問に答えたりできる。', scene:'月曜の朝、休憩室で週末の話をする。', who:'月曜の朝、休憩室にいる同僚', scenario:'月曜の朝の休憩室という設定で、私に「週末どうだった？何してたの？」と聞いてください。私が答えたら「へえ、いいね」のように反応し、自分の週末（買い物に行った、家でゆっくりした等）も具体的に少し話して、私にも聞き返してください。'},
+  {id:'depaato', mode:'nichijou', cat:'kaimono', src:'つなぐ日本語 L2', cando:'デパートの案内カウンターで、探しているお店が何階にあるか尋ねることができる。', scene:'デパートに入ってすぐ、靴売り場がどこにあるかわからず案内カウンターで尋ねる。', who:'デパートの案内カウンターの係員', scenario:'案内カウンターの係員です。私が「靴を探しているんですが」のように声をかけてきたら、「靴売り場でしたら4階にございます」のように具体的な階数を教えてください。私が「エスカレーターですか、エレベーターですか」のように行き方を聞いたら、案内してください。'},
+  {id:'resutoran', mode:'nichijou', cat:'kaimono', src:'いろどり 初級1 L4', cando:'レストランで、自分の好み（辛さ・材料など）を伝えて注文できる。', scene:'ファミリーレストランで、苦手な食材やアレルギーを伝えて注文する。', who:'ファミリーレストランの店員', scenario:'「ご注文はお決まりですか」から始めてください。私が「パクチーは抜いてください」「エビが食べられないので別のメニューはありますか」のように具体的な好みや苦手な食材を伝えたら、確認して対応（抜く、代わりのメニューを提案する）してください。'},
+  {id:'yoyaku', mode:'nichijou', cat:'dekakeru', src:'いろどり 初級1 L5', cando:'旅行の計画について相談し、予約についての希望を伝えることができる。', scene:'8月に沖縄旅行を計画していることを友達に相談する。', who:'旅行の相談に乗ってくれる友達', scenario:'私が「8月に沖縄に旅行に行きたい」と相談してきたら、いつ行きたいか聞いてください。お盆の時期なら「その時期は混むし飛行機も高くなるから、早く予約したほうがいいよ」のように、具体的な理由を添えてアドバイスしてください。'},
+  {id:'okure', mode:'nichijou', cat:'dekakeru', src:'いろどり 初級1 L7', cando:'待ち合わせに遅れることを、理由を添えて伝えることができる。', scene:'待ち合わせ場所への道に迷ってしまい、30分ほど遅れそう。', who:'待ち合わせをしている友達', scenario:'私から「ごめん、道に迷っちゃって、30分くらい遅れそう」という連絡を受けてください。今どのあたりにいるか、迷わず来られそうかを聞いて、了解し、先に近くの店に入って待つかなど、待ち方を一緒に決めてください。'},
+  {id:'joushi-dekakeru', mode:'nichijou', cat:'dekakeru', src:'つなぐ日本語 L3', cando:'同僚や友人と、出かける日にちや行き方、待ち合わせの時間を相談して決めることができる。', scene:'職場の休憩中に、雑誌で見つけたイルミネーションを見に行く計画を同僚と相談する。', who:'職場の同僚', scenario:'雑誌の写真を見せながら「今度の日曜、えびすのイルミネーションを見に行かない？」のように具体的なイベントと日にちを提案してください。私が行くと答えたら、電車・バス・タクシーのどれで行くか、待ち合わせの時間と場所（えびす駅など）を一緒に決めてください。'},
+  {id:'kisetsu', mode:'nichijou', cat:'kisetsu', src:'いろどり 初級1 L3', cando:'自分の国の季節や気候について、簡単に説明できる。', scene:'職場の同僚と、日本の冬と自分の国の気候を比べて話す。', who:'職場の同僚', scenario:'「日本の冬は寒くて、雪も降りますけど、〇〇さんの国はどうですか」のように聞いてください。私が説明したら、気温や服装の違いについて「へえ、そんなに暑いんですか、何度くらいですか？」のように、もう少し具体的に質問してください。'},
+  {id:'matsuri', mode:'nichijou', cat:'kisetsu', src:'いろどり 初級1 L9', cando:'自分の国のお祭りや行事について、簡単に紹介することができる。', scene:'国際交流会の新年パーティーで、自分の国の行事について話す。', who:'国際交流会で話す相手', scenario:'国際交流会の新年パーティーという設定で、「〇〇さんの国には、どんなお祭りがありますか」と聞いてください。私が答えたら、いつ祝うか、何を食べるか、家族で何をするかなど、具体的に1つずつ聞いてください。'},
+  {id:'kinjo', mode:'nichijou', cat:'kurashi', src:'いろどり（生活の日本語）', cando:'近所の困りごとについて、管理会社や大家に相談し対応をお願いできる。', scene:'隣の部屋から夜中に音楽の音が聞こえて眠れず、管理会社に相談する。', who:'アパートの管理会社の担当者', scenario:'私から「隣の部屋の音楽の音がうるさくて眠れない」という相談の電話を受けてください。いつ頃（夜中の12時過ぎ等）、どんな音かを具体的に聞いて、「隣の部屋の方に注意しておきます」のように対応を約束してください。'},
+
+  {id:'shokuba-aisatsu', mode:'shigoto', cat:'common', cando:'出勤・退勤のあいさつをしながら、天気や体調など身近な話題で短い雑談ができる。', scene:'梅雨の朝、電車が遅れがちな時期に出勤する。', who:'職場の先輩', scenario:'雨の朝、出勤してきた私に「おはよう。今日も雨だね、電車混んでなかった？」のように、天気や通勤の様子について具体的に話しかけてください。私の返事に「それは大変だったね」のように反応し、もう一往復会話を続けてください。',
+   model:[['先輩','あ、おはよう。今日、電車混んでた？'],['自分','はい、めちゃくちゃ混んでました…でも何とか間に合いました。'],['先輩','それは大変だったね。今日も雨みたいだし、気をつけてね。'],['自分','はい、ありがとうございます。〇〇さんも傘持ってきましたか。'],['先輩','うん、持ってきたよ。さ、行こうか。'],['自分','はい！']]},
+  {id:'shokuba-taichou', mode:'shigoto', cat:'hotel', cando:'体調不良や急な用事があるとき、事情を説明し丁寧に早退・欠勤の相談ができる。', scene:'チェックインラッシュの忙しい時間帯に、頭痛がしてきて相談する。', who:'ホテルの先輩スタッフ（フロント主任）', scenario:'チェックインラッシュで忙しい16時ごろ、学生から「すみません、さっきから頭が痛くて…」と相談を受けてください。顔色や熱の有無を聞き、少し休ませるか、他のスタッフに代わってもらうか判断して指示してください。',
+   model:[['主任','顔色、悪いね。大丈夫？'],['自分','あの、実は朝から頭痛がひどくて……。'],['主任','え、大丈夫？無理しないで。'],['自分','少し休ませていただいてもいいですか。'],['主任','うん、もちろん。今日は残業しないで、早く帰ったほうがいいよ。'],['自分','すみません、ありがとうございます。']]},
+  {id:'shokuba-kakunin', mode:'shigoto', cat:'airport', cando:'仕事の指示がわからないとき、失礼にならない聞き方で質問し、内容を確認できる。', scene:'預け荷物のタグの色分けについて、新人が説明の一部を聞き逃す。', who:'空港グランドハンドリングの先輩', scenario:'新人の学生に「優先荷物には赤いタグ、普通の荷物には青いタグを貼ってね」のように、具体的な手順を1つ教えてください。学生が「赤いタグは、優先的に降ろすお客様の荷物ということですか」のように確認してきたら、合っているか答えてください。',
+   model:[['先輩','優先荷物には赤いタグ、普通の荷物には青いタグを貼ってね。'],['自分','えっと、赤いタグは、優先のお客様の荷物ということですか。'],['先輩','そうそう、その通り。'],['自分','わかりました。青いタグは、普通のお客様の荷物ですね。'],['先輩','そう、その調子。'],['自分','ありがとうございます、メモしておきます。']]},
+  {id:'shokuba-irai', mode:'shigoto', cat:'office', cando:'同僚に軽い手伝いを頼んだり、頼まれた依頼を状況に応じて引き受けたりできる。', scene:'明日の会議資料のコピーを、締め切り時間つきで頼まれる。', who:'オフィスの同僚', scenario:'「明日の会議で使う資料、15部コピーしてもらえる？3時までに欲しいんだけど」のように、具体的な部数と締め切りを添えて頼んでください。学生が今すぐは難しいと言ったら、代案（時間をずらす、先にできるところまでやる等）を一緒に考えてください。',
+   model:[['同僚','ちょっといい？この資料、10部コピーしてもらえる？'],['自分','はい、大丈夫です。'],['同僚','助かる、ありがとう。'],['自分','（コピーする）できました、どうぞ。'],['同僚','早いね、ありがとう！']]},
+  {id:'shokuba-shinchoku', mode:'shigoto', cat:'hotel', cando:'仕事の進み具合（終わった／まだ／遅れそう）を簡潔に報告できる。', scene:'301号室から310号室までの客室清掃チェックを頼まれている。', who:'ホテルフロントの主任', scenario:'「さっき頼んだ301から310号室までの清掃チェック、どう？」のように具体的な業務について進み具合を聞いてください。学生の報告（終わった部屋数、残りの見込み時間）を聞いて、必要なら次の指示を出してください。',
+   model:[['主任','さっき頼んだ301から310号室までの清掃チェック、どう？'],['自分','あ、まだ半分くらいです。あと10分ぐらいで終わりそうです。'],['主任','そう。手伝おうか？'],['自分','あ、大丈夫です、もう少しでできます。'],['主任','わかった。お願いね。']]},
+  {id:'shokuba-kotowari', mode:'shigoto', cat:'airport', cando:'シフト交代や誘いを、相手への配慮を示しながら丁寧に断り、代案を提案できる。', scene:'来週日曜の早番シフトの交代を、前日に急に頼まれる。', who:'職場の同僚', scenario:'「来週の日曜の早番、代わってもらえないかな」のように具体的な日時でシフト交代を頼んでください。学生が断って代わりの日（例えば火曜なら大丈夫等）を提案してきたら、それを受け入れて会話を締めくくってください。',
+   model:[['同僚','来週の日曜、シフト代わってもらえないかな。'],['自分','すみません、その日はちょっと予定があって…'],['同僚','そっか、じゃあ難しいか。'],['自分','木曜日ならどうですか。'],['同僚','あ、木曜でも大丈夫。ありがとう！'],['自分','良かったです、じゃあそれで。']]},
+  {id:'shokuba-zatsudan', mode:'shigoto', cat:'common', cando:'休憩中の雑談で、質問に答えるだけでなく自分からも話題を広げたり質問したりできる。', scene:'休憩室で、コンビニの新商品のお弁当について話しかけられる。', who:'休憩室にいる同僚', scenario:'休憩中の私に「そのお弁当、コンビニの新商品？おいしい？」のように具体的な話題で話しかけてください。私が答えたら、私の出身国の食べ物についても質問するなど、もう少し話題を広げてください。',
+   model:[['先輩','お昼、何食べたの？'],['自分','コンビニのお弁当です。〇〇さんは？'],['先輩','わたしは今日、お弁当作ってきたよ。'],['自分','わあ、美味しそうですね。'],['先輩','そういえば、この前の旅行の写真があるよ、見る？'],['自分','はい、見たいです！'],['先輩','（写真を見せる）あ、もうこんな時間。そろそろ戻ろうか。'],['自分','はい！']]},
+  {id:'shokuba-sougou', mode:'shigoto', cat:'common', cando:'あいさつ・報告・確認・依頼・断り・雑談を組み合わせ、状況に応じて自然に対応できる。', scene:'オフィス・ホテル・空港のいずれかで、複数の場面が連続する状況設定（総合練習）。', who:'職場の先輩・同僚', scenario:'出勤のあいさつ（天気の話）→頼んでいた仕事の進み具合を聞く→急なシフト交代を頼む→休憩中の雑談、という流れを、具体的な内容（日時・業務名など）をそのつど作りながら自然に連続して進めてください。学生の返事に応じて展開を自由に選んでください。',
+   model:[['先輩','おはよう。今日、電車混んでた？'],['自分','（あいさつ・雑談で応じる）'],['主任','さっき頼んだ件、どう？'],['自分','（進捗を報告する）']]},
+  {id:'biz-denwa-toritsugi', mode:'shigoto', cat:'office', cando:'電話を受けて、担当者への取り次ぎと伝言を正しく承ることができる。', scene:'取引先からの電話を受け、見積書の件で担当者への伝言を承る。', who:'取引先「山田商事」の鈴木', scenario:'私が名乗ったら、山田商事の鈴木として名乗り、担当の「田中課長」への取り次ぎを依頼してください。田中が会議中で今は出られない設定で、私が伝言を承ると言ったら、「見積書の金額について確認したいので、15時以降に折り返しがほしい」という具体的な伝言内容を話し、最後に私が復唱したら、それで合っているか答えてください。', opener:'はい、（自分の会社名か「〇〇株式会社」）でございます。'},
+  {id:'biz-denwa-apo', mode:'shigoto', cat:'office', cando:'電話で訪問のアポイントを調整し、日時を復唱して確認できる。', scene:'新商品の打ち合わせのため、取引先に電話をかけて訪問の約束を取る。', who:'取引先の受付担当', scenario:'「はい、〇〇株式会社でございます」と電話に出て、私が名乗って新商品の打ち合わせのために訪問したいと言ったら、候補として「来週火曜日の14時」と「木曜日の10時」の2つを示して、私に選んでもらってください。日時が決まったら、復唱して確認し、丁寧に電話を終えてください。'},
+  {id:'biz-hourensou', mode:'shigoto', cat:'office', cando:'上司に仕事の進み具合を結論から簡潔に報告し、相談もできる。', scene:'新商品カタログの制作状況を、上司から急に聞かれる。', who:'学生の上司（課長）', scenario:'「ちょっといい？新商品のカタログの件、どうなってる？」と、具体的な仕事の進み具合を聞いてください。私が報告したら、締め切りに間に合いそうか確認し、困っていることがないか1つ聞いてください。'},
+  {id:'biz-raikyaku', mode:'shigoto', cat:'office', cando:'来客に対応し、名刺交換をして応接室へ案内できる。', scene:'10時の約束で、取引先ABC商事の担当者が来社する。', who:'取引先ABC商事から来た初対面の来客', scenario:'受付に着いた設定で「失礼いたします。ABC商事の者ですが、10時にお約束をいただいております」と話しかけてください。私が名刺交換を始めたら、自分の名刺を渡す言い方で応じ、私が応接室へ案内したら、素直に従ってください。'},
+  {id:'biz-kaigi', mode:'shigoto', cat:'office', cando:'会議で意見を求められたとき、理由を添えて自分の意見を伝えられる。', scene:'新しい販促キャンペーンの案について、会議で意見を求められる。', who:'会議の進行役（上司）', scenario:'会議の進行役として「それでは、新しい販促キャンペーンの案について、〇〇さんはどう思いますか」と具体的なテーマで意見を求めてください。私が答えたら、賛成か反対か、理由も含めてもう少し詳しく聞いてください。'},
+  {id:'gaishoku-houkoku', mode:'shigoto', cat:'gaishoku', cando:'ホール業務の状況を店長やシフトリーダーに報告し、指示を仰げる。', scene:'満席で3組待ちが出ており、ドリンクの在庫も切れそうな状況を報告する。', who:'飲食店の店長／シフトリーダー', scenario:'「今の状況どう？」と聞いて、満席で待ちが出ていないか、ドリンクなど在庫切れがないかを具体的に確認してください。学生の報告（3組待ち、ウーロン茶が残り少ない等）を聞いて、必要な指示（お待ちのお客様に案内する、在庫を確認する等）を1つ出してください。'},
+  {id:'gaishoku-kureimu', mode:'shigoto', cat:'gaishoku', cando:'お客様からのクレームに謝罪し、状況を確認して対応を伝えられる。', scene:'20分前に注文したハンバーグがまだ来ないという苦情を受ける。', who:'来店中のお客様', scenario:'「さっき頼んだハンバーグ、もう20分も待ってるんですけど」のように、具体的な苦情を学生（スタッフ）に伝えてください。学生が謝罪して対応（厨房に確認する、急がせる等）を提案したら、それで納得してください。'},
+  {id:'hotel-checkin', mode:'shigoto', cat:'hotel', cando:'チェックインで、お客様の要望（禁煙・喫煙、部屋タイプなど）を聞き、確認できる。', scene:'ホテルのフロントで、予約済みのお客様がチェックインする。', who:'チェックインに来たお客様', scenario:'予約した「田中」として、チェックインをお願いしてください。学生（スタッフ）が禁煙室か喫煙室かを聞いてきたら、希望を伝えてください。記入をお願いされたら、素直に応じてください。'},
+  {id:'hotel-annai', mode:'shigoto', cat:'hotel', cando:'館内の施設（朝食会場・大浴場・Wi-Fiなど）の場所や利用方法を説明できる。', scene:'チェックインのあと、お客様から館内施設について質問される。', who:'チェックイン後のお客様', scenario:'学生（スタッフ）に「朝食は何時からですか」のように、具体的な館内施設について1つ質問してください。答えを聞いたら、「大浴場はありますか」「Wi-Fiは使えますか」のように、もう1つ質問を重ねてください。'},
+  {id:'hotel-kureimu', mode:'shigoto', cat:'hotel', cando:'お客様からの設備の不具合の訴えに謝罪し、対応を伝えることができる。', scene:'部屋のエアコンが効かないという苦情の電話を受ける。', who:'電話をかけてきたお客様', scenario:'「部屋のエアコンが効かないんですけど」のように、具体的な設備トラブルを伝えてください。学生（スタッフ）が謝罪して対応（確認する、部屋を変える等）を提案したら、それを受け入れてください。'},
+  {id:'airport-toujou', mode:'shigoto', cat:'airport', cando:'搭乗手続きや保安検査の案内を、順序よく説明できる。', scene:'空港のカウンターで、搭乗ゲートまでの行き方を尋ねられる。', who:'搭乗ゲートを探しているお客様', scenario:'「すみません、32番ゲートはどちらですか」のように、具体的なゲート番号を挙げて道を尋ねてください。学生（スタッフ）の案内を聞いたら、「搭乗は何時からですか」のように、もう1つ質問を重ねてください。'},
+  {id:'airport-tenimotsu', mode:'shigoto', cat:'airport', cando:'手荷物の重量超過を、お客様に配慮しながら伝えることができる。', scene:'チェックインカウンターで、預け荷物が規定重量を超えていることを伝える。', who:'荷物を預けようとしているお客様', scenario:'学生（スタッフ）が「お荷物が◯キロ超過しております」のように伝えてきたら、「え、そうなんですか」と驚き、超過料金を減らす方法（荷物を減らす等）がないか聞いてください。'},
+  {id:'airport-chien', mode:'shigoto', cat:'airport', cando:'フライトの遅延について、理由を添えて謝罪しながら説明できる。', scene:'天候の影響で出発が1時間遅れることを、搭乗口でお客様に伝える。', who:'搭乗を待っているお客様', scenario:'学生（スタッフ）から、フライトが遅れるという説明を受けてください。「え、1時間もですか」のように驚き、代わりの対応（ラウンジ利用など）を聞いたら、了承してください。'},
+];
+const sceneById = Object.fromEntries(SCENES.map(s=>[s.id,s]));
+
+function buildPrompt(scene, tierIdx){
+  const t = TIERS[tierIdx];
+  const ctx = scene.mode==='shigoto' ? '職場' : '日常生活';
+  let lines = [
+    `あなたは${scene.who}です。日本語を学んでいる外国人留学生が、${ctx}の場面で会話の練習をします。以下のルールを守ってください。`,
+    '',
+    '・役になりきって、日本語だけで話してください。説明や採点はまだしないでください。',
+    `・${KEIGO_RULE}`,
+    `・${VOCAB_RULE}`,
+    `・${SENTENCE_RULE}`,
+    `・${scene.scenario}`,
+    `・${t.extra}`,
+    `・${NO_CORRECT_RULE}`,
+    `・${ON_TOPIC_RULE}`,
+    `・${CLOSE_RULE}`,
+    `・${AUTO_FEEDBACK_RULE}`,
+  ];
+  if(scene.opener) lines.push('・私が最初に話しかけるまで、何も言わずに待っていてください。');
+  return lines.join('\n');
+}
+
+/* ---------- stamps (localStorage) ---------- */
+function getStamps(){ try{ return JSON.parse(localStorage.getItem('kaiwa_passport_stamps')||'[]'); }catch(e){ return []; } }
+function addStamp(id){
+  try{
+    const s = getStamps();
+    if(!s.includes(id)){ s.push(id); localStorage.setItem('kaiwa_passport_stamps', JSON.stringify(s)); }
+  }catch(e){}
+  renderStampCount();
+}
+function renderStampCount(){ $('#stampCount').textContent = getStamps().length; }
+
+/* ---------- render ---------- */
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+const esc = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ---------- listen to model dialogue ---------- */
+let jaVoice = null;
+function pickJaVoice(){
+  if(!('speechSynthesis' in window)) return;
+  const vs = speechSynthesis.getVoices().filter(v => v.lang.replace('_','-').startsWith('ja'));
+  jaVoice = vs.find(v => /Google|Nanami|Sayaka|Ayumi|Kyoko/i.test(v.name)) || vs[0] || null;
+}
+if('speechSynthesis' in window){ pickJaVoice(); speechSynthesis.onvoiceschanged = pickJaVoice; }
+
+function speakDialogue(lines, btn){
+  if(!('speechSynthesis' in window)){
+    alert('このブラウザは音声読み上げに対応していません。Chrome か Edge でお試しください。');
+    return;
+  }
+  speechSynthesis.cancel();
+  if(btn){ btn.disabled = true; btn.textContent = '■ 再生中…'; }
+  const speakers = {};
+  let nextPitch = 1.0;
+  let i = 0;
+  function speakLine(){
+    if(i >= lines.length){
+      if(btn){ btn.disabled = false; btn.textContent = '▶ 音声で聞く'; }
+      return;
+    }
+    const [sp, tx] = lines[i++];
+    if(!(sp in speakers)){ speakers[sp] = nextPitch; nextPitch = nextPitch === 1.0 ? 1.25 : 1.0; }
+    const u = new SpeechSynthesisUtterance(tx.replace(/[（(][^）)]*[）)]/g,''));
+    u.lang = 'ja-JP'; u.rate = 0.95; u.pitch = speakers[sp];
+    if(jaVoice) u.voice = jaVoice;
+    u.onend = ()=> setTimeout(speakLine, 350);
+    u.onerror = ()=> speakLine();
+    speechSynthesis.speak(u);
+  }
+  speakLine();
+}
+
+/* ---------- 授業カレンダー：日付→今日やる場面 ---------- */
+const SCHEDULE = [
+  {date:'2026-09-29', id:'shokuba-aisatsu', stage:'授業日'},
+  {date:'2026-10-06', id:'hotel-checkin', stage:'授業日'},
+  {date:'2026-10-13', id:'shokuba-taichou', stage:'授業日'},
+  {date:'2026-10-20', id:'hotel-annai', stage:'授業日'},
+  {date:'2026-10-27', id:'shokuba-kakunin', stage:'授業日'},
+  {date:'2026-11-10', id:'hotel-kureimu', stage:'授業日'},
+  {date:'2026-11-17', id:'shokuba-irai', stage:'授業日'},
+  {date:'2026-11-24', id:'airport-toujou', stage:'授業日'},
+  {date:'2026-12-01', id:'shokuba-shinchoku', stage:'授業日'},
+  {date:'2026-12-08', id:'airport-tenimotsu', stage:'授業日'},
+  {date:'2026-12-15', id:'shokuba-kotowari', stage:'授業日'},
+  {date:'2026-12-22', id:'airport-chien', stage:'授業日'},
+  {date:'2027-01-12', id:'shokuba-zatsudan', stage:'授業日'},
+  {date:'2027-01-19', id:'shokuba-sougou', stage:'復習・予備日'},
+  {date:'2027-01-26', id:'shokuba-sougou', stage:'授業日（最終回）'},
+];
+function todayStr(){
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+}
+function renderTodayBanner(){
+  const today = todayStr();
+  const hit = SCHEDULE.find(s => s.date === today);
+  if(!hit){
+    $('#todayBanner').innerHTML = `<div class="todaybox none"><span class="eyebrow2">今日は授業日ではありません</span><b>好きな場面を選んで、自由に練習しましょう</b></div>`;
+    return;
+  }
+  const s = sceneById[hit.id];
+  $('#todayBanner').innerHTML = `
+    <div class="todaybox">
+      <span class="eyebrow2">📅 今日の授業（${hit.date.slice(5).replace('-','/')}）</span>
+      <span class="stagepill">${hit.stage}</span>
+      <b>${s.cando}</b>
+      <button class="todaybtn" id="todayBtn">この場面を開く →</button>
+    </div>`;
+  $('#todayBtn').onclick = ()=>{ activeMode = s.mode; activeTab = 'all'; showDetail(hit.id); };
+}
+
+let activeMode = 'nichijou';
+let activeTab = 'all';
+
+function renderModeSwitch(){
+  const items = [...MODES, {key:'keigo', label:'敬語', keigobtn:true}];
+  $('#modeswitch').innerHTML = items.map(m=>`<button data-mode="${m.key}" class="${m.key===activeMode?'on':''} ${m.keigobtn?'keigobtn':''}">${m.label}</button>`).join('');
+  $$('#modeswitch button').forEach(b=>b.onclick=()=>{ activeMode=b.dataset.mode; activeTab='all'; showList(); });
+}
+
+function renderTabs(){
+  if(activeMode==='keigo'){ $('#tabs').innerHTML=''; return; }
+  const cats = CATS.filter(c=>c.mode===activeMode);
+  const all = [{key:'all', label:'すべて'}, ...cats];
+  $('#tabs').innerHTML = all.map(c=>`<button data-tab="${c.key}" class="${c.key===activeTab?'on':''}">${c.label}</button>`).join('');
+  $$('#tabs button').forEach(b=>b.onclick=()=>{ activeTab=b.dataset.tab; showList(); });
+}
+
+function showList(){
+  $('#screenDetail').style.display='none';
+  renderModeSwitch();
+  $('#screenKeigo').style.display = activeMode==='keigo' ? 'block' : 'none';
+  $('#screenList').style.display = activeMode==='keigo' ? 'none' : 'block';
+  renderTabs();
+  if(activeMode==='keigo') return;
+
+  const inMode = SCENES.filter(s=>s.mode===activeMode);
+  const list = activeTab==='all' ? inMode : inMode.filter(s=>s.cat===activeTab);
+  const stamps = getStamps();
+  if(activeMode==='nichijou'){
+    $('#visaNote').textContent = activeTab==='all'
+      ? '「いろどり」「つなぐ日本語」の場面をもとに整理しています。'
+      : `カテゴリー：${catByKey[activeTab].label}`;
+  } else {
+    $('#visaNote').textContent = activeTab==='all'
+      ? '就職しやすい在留資格（技術・人文知識・国際業務／特定技能）ごとに場面を分けています。'
+      : `想定する在留資格：${catByKey[activeTab].visa}`;
+  }
+  $('#cardlist').innerHTML = list.map(s=>{
+    const c = catByKey[s.cat];
+    const stamped = stamps.includes(s.id);
+    const tag = s.src || c.visa || '';
+    return `<button class="jobcard" data-id="${s.id}">
+      <div class="row1">
+        <span class="chip">${c.label}</span>
+        ${tag ? `<span class="chip visa">${tag}</span>` : ''}
+        ${stamped ? '<span class="stamp">済スタンプ</span>' : ''}
+      </div>
+      <b>${s.cando}</b>
+      <span class="scene">${s.scene}</span>
+    </button>`;
+  }).join('');
+  $$('.jobcard').forEach(b=>b.onclick=()=>showDetail(b.dataset.id));
+}
+
+function showDetail(id){
+  const s = sceneById[id];
+  const c = catByKey[s.cat];
+  $('#screenList').style.display='none';
+  $('#screenKeigo').style.display='none';
+  $('#screenDetail').style.display='block';
+  window.scrollTo(0,0);
+
+  const tag = s.src || c.visa || '';
+  $('#detailChips').innerHTML = `<span class="chip">${c.label}</span>${tag ? `<span class="chip visa">${tag}</span>` : ''}`;
+  $('#detailTitle').textContent = s.cando;
+  $('#detailScene').textContent = s.scene;
+  $('#detailOpener').innerHTML = s.opener ? `<p class="opener-note">💡 この場面だけ、あなたから先に話しかけます。プロンプトを送ったあと、続けて自分で「${s.opener}」と送ってください。</p>` : '';
+
+  if(s.model){
+    $('#modelHost').innerHTML = `
+      <div class="modelbox">
+        <div class="modelhead">
+          <span class="modeltitle">📖 モデル会話</span>
+          <button class="playbtn" id="playModel">▶ 音声で聞く</button>
+        </div>
+        ${s.model.map(([sp,tx])=>`<p class="modelline"><b>${sp}：</b>${esc(tx)}</p>`).join('')}
+      </div>`;
+    $('#playModel').onclick = ()=>speakDialogue(s.model, $('#playModel'));
+  } else {
+    $('#modelHost').innerHTML = '';
+  }
+
+  $('#stepsHost').innerHTML = TIERS.map((t,i)=>{
+    const boxId = `box_${s.id}_${i}`;
+    return `<div class="step">
+      <div class="steplabel"><span class="num">${i+1}</span><span class="name">${t.label}</span></div>
+      <p class="stephint">${t.hint}</p>
+      <div class="promptbox" id="${boxId}">${buildPrompt(s,i)}</div>
+      <button class="copybtn" data-copytarget="${boxId}" data-stampid="${s.id}">コピーする</button>
+    </div>`;
+  }).join('');
+
+  $('#reflectBox').textContent = REFLECT_PROMPT;
+  $('.reflect .copybtn').dataset.stampid = s.id;
+
+  $$('#screenDetail .copybtn').forEach(btn=>{
+    btn.onclick = async ()=>{
+      const box = document.getElementById(btn.dataset.copytarget);
+      const text = box.textContent;
+      try{
+        await navigator.clipboard.writeText(text);
+      }catch(e){
+        const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select();
+        try{ document.execCommand('copy'); }catch(e2){}
+        document.body.removeChild(ta);
+      }
+      btn.textContent='コピーしました';
+      btn.classList.add('copied');
+      setTimeout(()=>{ btn.textContent='コピーする'; btn.classList.remove('copied'); },1600);
+      if(btn.dataset.stampid) addStamp(btn.dataset.stampid);
+    };
+  });
+}
+
+$('#backBtn').onclick = ()=>{ $('#screenDetail').style.display='none'; showList(); };
+
+$('#stampTotal').textContent = SCENES.length;
+renderStampCount();
+renderTodayBanner();
+showList();
+</script>
